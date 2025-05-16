@@ -44,7 +44,7 @@ app.MapGet("/api/departments",async (_2019sbdContext context, CancellationToken 
     }
 });
 
-app.MapGet("/api/employees",async (_2019sbdContext context, CancellationToken token) => 
+app.MapGet("/api/employees", async (_2019sbdContext context, CancellationToken token) => 
 {
     try
     {
@@ -57,14 +57,29 @@ app.MapGet("/api/employees",async (_2019sbdContext context, CancellationToken to
     
 });
 
-app.MapGet("/api/employees/{id}", (int id) =>
+app.MapGet("/api/employees/{id}", async (_2019sbdContext context, CancellationToken token, int id) =>
 {
-    
+    try
+    {
+        return Results.Ok( context.Employees.Single(x => x.Id == id));
+    }
+    catch(Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }   
 });
 
-app.MapPost("/api/employees", () =>
+app.MapPost("/api/employees", async (_2019sbdContext context, CancellationToken token, Employee emp)=>
 {
-    
+    try
+    {
+        context.Employees.Add(emp);
+        return Results.Created($"/api/employees/{emp.Id}", emp);
+    }
+    catch(Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }   
 });
 
 app.MapPut("/api/employees/{id}", (int id) =>
